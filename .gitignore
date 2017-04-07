@@ -405,3 +405,4 @@ paket-files/
 *.xsd.cs
 
 # End of https://www.gitignore.io/api/python,database,executable,visualstudio
+PiPlayer_PY/requirements.txt
