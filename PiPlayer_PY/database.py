@@ -82,6 +82,7 @@ class MusicDatabase:
 #    return connection
 #Adds music to the database based upon the meta dictionary
 #def addMusic(cursor:sqlite3.Cursor, meta:dict):
+
 #    try:
 #        extractedMeta = []
 #        extractedMeta.append(meta.get('path'))
