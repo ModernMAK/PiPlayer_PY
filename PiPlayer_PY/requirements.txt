@@ -1,0 +1,4 @@
+mutagen==1.37
+PyAudio==0.2.11
+pydub==0.18.0
+requests==2.13.0

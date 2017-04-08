@@ -12,6 +12,8 @@
     <OutputPath>.</OutputPath>
     <Name>PiPlayer_PY</Name>
     <RootNamespace>PiPlayer_PY</RootNamespace>
+    <InterpreterId>{257e81a1-3f0b-4411-809a-a29291ba7ec5}</InterpreterId>
+    <InterpreterVersion>3.5</InterpreterVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -26,6 +28,9 @@
     <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="config.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="database.py">
       <SubType>Code</SubType>
     </Compile>
@@ -36,11 +41,17 @@
     <Compile Include="musicplayer.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="piplayer.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="playlistplayer.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="config.json">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="requirements.txt" />
   </ItemGroup>
   <ItemGroup>

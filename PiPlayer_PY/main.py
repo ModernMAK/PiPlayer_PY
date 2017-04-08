@@ -1,49 +1,58 @@
-from appJar import gui
-import database
-import musicplayer
 
-def stripSql(sql):
-    return str(sql).strip('(').strip(')').strip('\'').strip(',')
+#import database
+#from musicplayer import MusicPlayer
+#import random
 
-connection = database.databaseSetup(override = False)
-cursor = connection.cursor()
-#database.parseDirectory(cursor,r'C:\Users\ModernMAK\Downloads\Ken Ashcorp',recursive=True)
-connection.commit()
-songs = database.getSongs(cursor)
-for i in range(0,len(songs) - 1):
-    songs[i] = stripSql(songs[i])
-#database.printMusic(cursor)
-connection.close()
-main = gui()
-player = musicplayer.MusicPlayer()
-
-main.showSplash('PiPlayer',fill='black',stripe='white',fg='black')
-row = 0
-col = 0
-def load(player,title):
-    connection = database.databaseSetup(override = False)
-    cursor = connection.cursor()
-    player.stop()
-    player.load(database.getPath(cursor,title))
-    player.play()
-    connection.close()
-
-for song in songs:
-    main.addButton(song,load(player,song),row=row,column=col)
-    row+=1
+##Lots of credit to Steveway for devising most of this without me having to
+##discover pythons threading libraries
+##https://github.com/steveway/papagayo-ng/blob/working_vol/SoundPlayer.py
+##While the code is/may be quite similiar, alot has been repurposed for my own needs
 
 
-main.addButton('Play',player.play(),row=row,column=col)
-col+=1
-main.addButton('Pause',player.pause(),row=row,column=col)
-col+=1
-main.addButton('Restart',player.restart(),row=row,column=col)
-col+=1
-main.addButton('stop',player.stop(),row=row,column=col)
-col = 0
-row+=1
-main.addButton('quit',quit(),row=row,column=col)
+from database import MusicDatabase
+database = MusicDatabase('piplayer.db')
+database.connect(initialize=False)
+print('music contains {} items'.format(database.fetchTableSize('music')))
 
+distinct = True
+results = database.fetchMusicResults('artist',distinct=distinct)
+for result in results:
+    try:
+        print(result['artist'])
+    except:
+        if not distinct:
+            print(result['id'])
 
+database.disconnect()
 
-main.go()
+#player = MusicPlayer()
+
+#connection = database.databaseSetup(override = False)
+#cursor = connection.cursor()
+##database.parseDirectory(cursor,"M:\Music",recursive=True)
+##connection.commit()
+##database.printMusic(cursor)
+
+#searchTests = [['id',0],['track',0],['artist','The Best Artist'],['album','The Awesomest Album'],['title','The Greatest Albums']]
+#for search in searchTests:
+#    print('Searching "{}" in {}'.format(search[1],search[0]))
+#    results = database.fetchMusicFromColumn(cursor,search[0],search[1])
+#    if results is not None:
+#        for dict in results:
+#            if dict is not None:
+#                for key in dict:
+#                    print(key + ":" + str(dict[key]))
+#                print()
+#        print("\n")
+
+#len = database.fetchTableSize(cursor,'music','id')
+
+#try:
+#    song = database.fetchMusicFromColumn(cursor,'id',random.randrange(0,len-1)+1)[0]
+#    player.load(song['file'])
+#    player.play()
+#    print("Now playing '{}'\nBy '{}'\nFrom '{}'\n".format(song['title'],song['artist'],song['album']))
+    
+#except:
+#    pass
+#connection.close()
