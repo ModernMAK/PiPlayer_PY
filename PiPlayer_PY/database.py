@@ -1,4 +1,3 @@
-
 from sqlite3 import Cursor, Connection, connect
 import os
 from musicmeta import MusicMetadata
