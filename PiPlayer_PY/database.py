@@ -155,6 +155,12 @@ def printMusic(cursor:sqlite3.Cursor):
             print(row)
         except:
             print("Cannot print this given row!")
+def getSongs(cursor:sqlite3.Cursor):
+    results = cursor.execute('SELECT title FROM music ORDER BY title asc')
+    return results.fetchall()
+def getPath(cursor:sqlite3.Cursor,title:str):
+    results = cursor.execute('SELECT file FROM music where title=?',(title,))
+    return results.fetchone()
 #def findClosest(cursor:sqlite3.Cursor,table:str,record:str):    
 #    try:
 #        return cursor.execute('''select min(string)

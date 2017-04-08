@@ -22,7 +22,7 @@ def getMeta(file:str):
     #metaExtractors['.mp3'] = getMetaMp3
     file = os.path.abspath(file)
     #try:
-    def getTag(data,tag:str,default=None):
+    def getTag(data,tag:str,default=[None]):
         try:
             return data[tag]
         except:
