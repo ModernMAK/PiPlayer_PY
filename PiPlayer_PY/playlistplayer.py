@@ -9,7 +9,7 @@ class PlaylistLoopingState(Enum):
     LoopingSong = 2
 
 class PlaylistPlayer:
-    def __init__(self,*,playlist:list=None, loopingState:PlaylistLoopingState=PlaylistLoopingState.NotLooping):
+    def __init__(self,*,playlist:str=None, loopingState:PlaylistLoopingState=PlaylistLoopingState.NotLooping):
         self.player = MusicPlayer()
         self.playlist = []#I want it to realize its a list, none wont do that
         if playlist is not None:

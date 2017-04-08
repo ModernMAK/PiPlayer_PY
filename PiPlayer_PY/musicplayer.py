@@ -1,10 +1,10 @@
 from pydub import AudioSegment
 from os.path import splitext
 from pyaudio import PyAudio
-#from musicplayerstate import MusicPlayerState
 import _thread as thread
 from pydub.utils import make_chunks
 from enum import Enum
+
 class MusicPlayerState(Enum):
     #No Song Loaded
     Initialized = 0
@@ -26,9 +26,20 @@ class MusicPlayer:
         self.audio = PyAudio()
         self.pydubFile = None
         self.isPlaying = False #An internal State which prevents the race condition of having not closed the
-                               #thread before starting a new thread, thus allowing the new thread to keep the
-                               #old one open as the old one's state is overriden by the new one's state...
-                               #Does not determine the state of the player
+                               #thread before starting a new thread, thus
+                                                             #allowing the new
+                                                                                           #thread to keep
+                                                                                           #the
+                                                                                           #old one open as
+                                                                                           #the old one's
+                                                                                           #state is
+                                                                                           #overriden by the
+                                                                                           #new one's
+                                                                                           #state...
+                                                                                           #Does not
+                                                                                           #determine the
+                                                                                           #state of the
+                                                                                           #player
         self.volume = 100
         self.time = 0
         if(soundFile is not None):
@@ -56,9 +67,6 @@ class MusicPlayer:
             self.pydubFile = prevPydbubFile
             self.time = prevTime
     def play(self):
-        #import pydub.playback
-        #pydub.playback.play(self.pydubFile)
-        #return
         thread.start_new_thread(self.playInternal, (self.time, self.duration()))
     def duration(self):
         if self.pydubFile is not None:
@@ -77,12 +85,10 @@ class MusicPlayer:
                                     rate=self.pydubFile.frame_rate,
                                     output=True)
 
-        playchunk = self.pydubFile[start * 1000.0:(start + length) * 1000.0]# - (60 - (60 * (self.volume/100.0)))
-        #self.time = start
+        playchunk = self.pydubFile[start * 1000.0:(start + length) * 1000.0]
         for chunks in make_chunks(playchunk, millisecondchunk * 1000):
             chunkAltered = chunks - (60 - (60 * (self.volume / 100.0)))
             self.time += millisecondchunk
-            #stream.write(chunks._data)
             self.isPlaying = True
             stream.write(chunkAltered._data)
             if (self.state != MusicPlayerState.Playing):
