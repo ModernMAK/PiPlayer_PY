@@ -25,21 +25,9 @@ class MusicPlayer:
         self.state = MusicPlayerState.Initialized
         self.audio = PyAudio()
         self.pydubFile = None
-        self.isPlaying = False #An internal State which prevents the race condition of having not closed the
-                               #thread before starting a new thread, thus
-                                                             #allowing the new
-                                                                                           #thread to keep
-                                                                                           #the
-                                                                                           #old one open as
-                                                                                           #the old one's
-                                                                                           #state is
-                                                                                           #overriden by the
-                                                                                           #new one's
-                                                                                           #state...
-                                                                                           #Does not
-                                                                                           #determine the
-                                                                                           #state of the
-                                                                                           #player
+        #Lets us make sure that the state change has caught up to the audio change
+        self.isPlaying = False 
+                                                                                                                                   #player
         self.volume = 100
         self.time = 0
         if(soundFile is not None):

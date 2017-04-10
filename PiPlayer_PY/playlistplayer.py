@@ -7,18 +7,26 @@ class PlaylistLoopingState(Enum):
     NotLooping = 0
     LoopingPlaylist = 1
     LoopingSong = 2
-
-class PlaylistPlayer:
-    def __init__(self,*,playlist:str=None, loopingState:PlaylistLoopingState=PlaylistLoopingState.NotLooping):
+class PlaylistState(Enum):
+    Uninitialized = 0,
+    Start = 1,
+    Playing = 2,
+    End = 3
+class Playlist:
+    def __init__(self,*,playlist:list=None, loopingState:PlaylistLoopingState=PlaylistLoopingState.NotLooping):
         self.player = MusicPlayer()
         self.playlist = []#I want it to realize its a list, none wont do that
+        self.state = PlaylistState.Uninitialized
         if playlist is not None:
             self.playlist = playlist
+            self.state = PlaylistState.Start
         self.currentIndex = 0
         self.loopState = loopingState
 
     def next(self):
         self.currentIndex = self.nextIndex()
+        if self.currentIndex == self.playlistLength() - 1:
+            self.state = PlaylistState.End
     def nextIndex(self):
         index = self.currentIndex
         if self.loopState != PlaylistLoopingState.LoopingSong:
@@ -52,5 +60,16 @@ class PlaylistPlayer:
     def previousSong(self):
         return self.playlist[self.previousIndex()]
 
-    def playlistLength(self):
-        return self.playlist.count
+    def getSong(self,index:int):
+        return self.playlist[index]
+
+    def playlistLength(self):        
+        #if self.playlist is None:
+        #    return 0
+        return len(self.playlist)
+
+    def load(self,playlist:list):
+        self.playlist = playlist
+        self.state = PlaylistState.Start
+        self.currentIndex = 0
+    

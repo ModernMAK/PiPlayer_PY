@@ -25,7 +25,7 @@ def getMeta(file:str):
         return None    
 
 class MusicMetadata:
-    def __init__(self,*, file:str, title:str=None, album:str=None, artist:str=None, track:int=0):
+    def __init__(self,*, file:str=None, title:str=None, album:str=None, artist:str=None, track:int=0):
         self.file = file
         self.title = title
         self.album = album

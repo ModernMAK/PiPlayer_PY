@@ -26,9 +26,12 @@ class MusicDatabase:
         self.connection.close()
         self.connection = None
         self.cursor = None
-    def addMusic(self,meta:MusicMetadata):
+    def addMusic(self,meta:MusicMetadata,*,update:bool=False):
         try:
-            cmd = "insert into music (file,artist,album,title,track) values ({},{},{},{},{})".format(meta.file,meta.artist,meta.album,meta.title,meta.track)
+            if update:
+                cmd = 'update music set artist = {}, album = {}, title = {}, track = {} where file = {}'.format(meta.artist,meta.album,meta.title,meta.track,meta.file)
+            else:
+                cmd = "insert into music (file,artist,album,title,track) values ({},{},{},{},{})".format(meta.file,meta.artist,meta.album,meta.title,meta.track)
             self.cursor.execute(cmd)
         except sqlite3.DatabaseError as dbe:
             print("DBE : " + str(dbe))
@@ -39,7 +42,8 @@ class MusicDatabase:
             column = '*'
         cmd = """SELECT COUNT ({}) FROM {};""".format(column,table)
         return int(self.cursor.execute(cmd).fetchone()[0])
-    def fetchMusicResults(self,key:str,*,fetchAll:bool=True,distinct:bool=False):
+    #Fetches the column containing the results of all rows
+    def fetchMusicColumnResults(self,key:str,*,fetchAll:bool=True,distinct:bool=False):
         
         input = [key]
         if not distinct:
@@ -52,7 +56,16 @@ class MusicDatabase:
             return self.parseMusicResults(results.fetchall(),input)
         else:
             return self.parseMusicResults(results.fetchone(),input)
-    def parseMusicResults(self,results,keys:list):
+    #Fetches all rows which match the value
+    def fetchMusicRowResults(self,key:str,value,*,fetchall:bool=True):   
+        input = ['id','file','artist','album','title','track']
+        cmd = 'SELECT {} from music where {} = {} order by {} asc'.format(", ".join(input),key,value,key)       
+        results = self.cursor.execute(cmd)        
+        if fetchAll:
+            return self.parseMusicResults(results.fetchall(),input)
+        else:
+            return self.parseMusicResults(results.fetchone(),input)
+    def parseResults(self,results,keys:list):
         parsedResults = []
         for result in results:
             parsedResult = {}
@@ -60,7 +73,44 @@ class MusicDatabase:
                 parsedResult[keys[i]] = result[i]
             parsedResults.append(parsedResult)
         return parsedResults
-
+    def parseMusicResults(self,results,keys:list):
+        parsedResults = []
+        genericResults = self.parseResults(results,keys)
+        for result in genericResults:
+            meta = MusicMetadata()
+            meta.loadDict(result)
+            finalParsed = {'id':result.get('id',0),'meta':meta}
+            parsedResults.append(finalParsed)
+        return parsedResults    
+    def fetchPlaylistId(self,playlistName:str):        
+        input = ['id','name']
+        cmd = 'SELECT id, name from playlist where name like "%{}%" order by id asc'.format(playlistName)            
+        results = self.cursor.execute(cmd)        
+        parsedResults = self.parseResults(results.fetchall(),input)
+        if len(parsedResults) < 1:
+            return 0
+        else:
+            return parsedResults[0]['id']
+    def fetchPlaylist(self,playlist):
+        if isinstance(playlist,str):
+            id = self.fetchPlaylistId(playlist)
+        elif isinstance(playlist,int):
+            id = playlist
+        else:
+            raise "Parameter exception!"
+        if id == 0:
+            raise "Id doesn't exist!"
+        #cmd = 'SELECT music_id from map_playlist where playlist_id={} order by position asc'.format(id)        
+        #parsedResults = self.parseResults(results.fetchall(),['music_id'])
+        input = ['file','artist','album','title','track']#,'position']
+        cmd = 'SELECT {} FROM map_music_playlist JOIN music ON map_music_playlist.music_id = music.id where map_music_playlist.id={} order by position asc'.format(", ".join(input),id)
+        results = self.cursor.execute(cmd)        
+        parsedResults = self.parseMusicResults(results.fetchall(),input)
+        sanitizedResults = []
+        for parsed in parsedResults:
+            sanitizedResults.append(parsed['meta'])
+        return sanitizedResults
+                
 ##initializes a table given the name and the provided fields
 #def tableSetup(cursor:sqlite3.Cursor,
 #name:str,fields:str,*,override:bool=False):
