@@ -1,12 +1,12 @@
 #Music Directories
 #Database File
-from os import open
-from json import load, json_data
+import json
+import os 
 
-def loadConfig(path):
+def loadConfig(path:str):
     try:
-        with open(path) as json_data:
-            d = load(json_data)
+        with os.open(path) as json_data:
+            d = json.load(json_data)
             json_data.close()
             return d
     except IOError as e:

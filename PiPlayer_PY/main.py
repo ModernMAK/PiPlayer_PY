@@ -8,22 +8,25 @@
 ##https://github.com/steveway/papagayo-ng/blob/working_vol/SoundPlayer.py
 ##While the code is/may be quite similiar, alot has been repurposed for my own needs
 
+from piplayer import PiPlayer
 
-from database import MusicDatabase
-database = MusicDatabase('piplayer.db')
-database.connect(initialize=False)
-print('music contains {} items'.format(database.fetchTableSize('music')))
+app = PiPlayer('config.json')
+app.scanLibrary()
+#from database import MusicDatabase
+#database = MusicDatabase('piplayer.db')
+#database.connect(initialize=False)
+#print('music contains {} items'.format(database.fetchTableSize('music')))
 
-distinct = True
-results = database.fetchMusicResults('artist',distinct=distinct)
-for result in results:
-    try:
-        print(result['artist'])
-    except:
-        if not distinct:
-            print(result['id'])
+#distinct = True
+#results = database.fetchMusicResults('artist',distinct=distinct)
+#for result in results:
+#    try:
+#        print(result['artist'])
+#    except:
+#        if not distinct:
+#            print(result['id'])
 
-database.disconnect()
+#database.disconnect()
 
 #player = MusicPlayer()
 

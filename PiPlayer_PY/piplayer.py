@@ -6,7 +6,7 @@ from os import listdir
 from os.path import abspath, join, isdir
 class PiPlayer:
     def __init__(self,configFile:str):
-        self.config = config.loadConfig(configFile)
+        self.config = loadConfig(configFile)
         self.player = MusicPlayer()
         self.database = MusicDatabase(self.config['database'])
     def playTest(self):
